@@ -1,0 +1,4 @@
+# hosts-dev
+
+[dataiku]
+design-node ansible_host=ec2-18-156-134-18.eu-central-1.compute.amazonaws.com
