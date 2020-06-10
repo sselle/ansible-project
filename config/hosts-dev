@@ -1,4 +1,20 @@
 # hosts-dev
 
-[dataiku]
-design-node ansible_host=ec2-18-156-134-18.eu-central-1.compute.amazonaws.com
+[dss]
+3.127.131.201
+
+[app]
+18.184.41.218
+18.185.0.42
+
+[db]
+3.126.50.163
+
+# multi is the name of the group
+[multi:children]
+app
+db
+
+[multi:vars]
+ansible_ssh_user=centos
+ansible_ssh_private_key_file=~/.ssh/FFM_key.pem

@@ -1,0 +1,17 @@
+
+---
+# create user and group for dssuser
+- hosts: dss
+  become: yes                             # become root (to install packages)
+  tasks:
+    - name: Create group for dssuser
+      group: 
+        name: dss
+        state: present
+    - name: Create dssuser
+      user:
+        name: dssuser
+        group: dss
+        createhome: yes
+...
+
