@@ -26,6 +26,14 @@
 ### run job in background for max 3600 seconds
     ansible multi -b -B 3600 -P 0 -a "yum -y update"
 
+### grep needs shell module (native ansible command doesn't work, 
+### because it only returns on complete operations )
+    ansible multi -b -m shell -a "tail /var/log/messages | grep ansible
+
+### deploy from repo
+    ansible app -b -m git -a "repo=git://example.com/path/to/repo.git \
+    dest=/opt/myapp update=yes version=1.2.4"
+
 ### attach disk
     lsblk
     sudo mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/[DEVICE_ID]
