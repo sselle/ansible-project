@@ -1,0 +1,38 @@
+
+---
+# create dssuser, add ssh key, allow sudo
+- hosts: dss
+  become: yes                             # become root (to install packages)
+  tasks:
+    - name: Create group for dssuser
+      group: 
+        name: dss
+        state: present
+
+    - name: Create dssuser
+      user:
+        name: dssuser
+        groups: dss, wheel
+        createhome: yes
+        generate_ssh_key: yes
+        ssh_key_bits: 4096
+        ssh_key_file: .ssh/id_rsa
+
+    - name: Create authorized key file
+      shell:
+        cmd: cat /home/dssuser/.ssh/id_rsa.pub > /home/dssuser/.ssh/authorized_keys
+
+    - name: Get the public key for dssuser
+      fetch:
+        src: /home/dssuser/.ssh/id_rsa
+        dest: ~/.ssh/id_dssuser_{{ inventory_hostname }}.pem
+        flat: yes
+
+    - name: Allow sudo for wheel group without PW
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+...

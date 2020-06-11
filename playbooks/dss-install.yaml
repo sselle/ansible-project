@@ -1,0 +1,73 @@
+
+---
+- hosts: dss
+  become: yes
+  tasks:
+  - name: Put SELinux in permissive mode, logging actions that would be blocked.
+    selinux:
+      policy: targeted
+      state: permissive
+
+  - name: Create datadir
+    file:
+      path: /dss/data
+      state: directory
+      owner: dssuser
+      group: dssuser
+      mode: 0711
+
+  - name: Create installdir
+    file:
+      path: /dss/install
+      state: directory
+      owner: dssuser
+      group: dssuser
+      mode: 0711
+
+  - name: Download DSS # pass version via variable
+    get_url: 
+      url: https://downloads.dataiku.com/public/studio/7.0.2/dataiku-dss-7.0.2.tar.gz
+      dest: /dss/install/dataiku.tar.gz
+      mode: '0440'
+
+  - name: Get Hadoop Lib  
+    get_url:  
+      url: https://downloads.dataiku.com/public/studio/7.0.2/dataiku-dss-hadoop3-standalone-libs-generic-7.0.2.tar.gz
+      dest: /dss/install/dataiku-hadoop3.tar.gz
+      mode: '0440'
+
+  - name: Get Spark Lib  
+    get_url:    
+      url: https://downloads.dataiku.com/public/studio/7.0.2/dataiku-dss-spark-standalone-7.0.2-2.4.3-generic-hadoop3.tar.gz
+      dest: /dss/install/dataiku-spark.tar.gz
+      mode: '0440'
+  
+  - name: Open tarball
+    unarchive: 
+      src: /dss/install/dataiku.tar.gz
+      dest: /dss/install/
+      remote_src: yes
+
+  - name: install pexpect
+    yum:
+      name: python3-pexpect
+      state: present
+  
+  - name: install-deps
+    expect: 
+      command: /dss/install/dataiku-dss-7.0.2/scripts/install/install-deps.sh
+      responses:
+        .*\nIs this ok \[y\/N\]: y 
+    
+  - name: install DSS 
+    become: yes
+    become_user: dssuser
+    shell: /dss/install/dataiku-dss-7.0.2/installer.sh -d /dss/data -p 11000
+  
+  - name: start DSS
+    become: yes
+    become_user: dssuser
+    command: /dss/data/bin/dss start
+    
+  # - name: run-on-boot
+...

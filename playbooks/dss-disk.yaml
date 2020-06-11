@@ -1,0 +1,33 @@
+---
+- hosts: dss
+  become: yes                             # become root (to install packages)
+  tasks:
+  - name: Format the attached disk        # pass device via variable
+    filesystem:
+      fstype: ext4
+      dev: /dev/xvdb
+      resizefs: yes
+
+  - name: Get UUID
+    shell: >
+      blkid | grep xvdb |
+      sed -n 's/.*UUID=\"\([^\"]*\)\".*/\1/p'
+    register: uuid
+
+  - name: Create DSS directory
+    file:
+      path: /dss
+      owner: dssuser
+      group: dssuser
+      mode: 0711
+      
+  - name: Mount disk
+    mount:
+      backup: yes
+      path: /dss
+      src: "UUID={{uuid.stdout}}"
+      fstype: ext4
+      boot: yes
+      state: present
+
+...
