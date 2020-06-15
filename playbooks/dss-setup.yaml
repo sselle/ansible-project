@@ -1,0 +1,13 @@
+---
+#ToDo: prompt for Storage selection, Timeout problem in dependecy installation, separate SELinux / reboot 
+- name: Update OS
+  import_playbook: dss-update-os.yaml
+- name: Create User
+  import_playbook: dss-user.yaml
+- name: Disk
+  import_playbook: dss-disk.yaml
+- name: SELinux
+  import_playbook: dss-selinux.yaml
+- name: Install
+  import_playbook: dss-install.yaml
+...

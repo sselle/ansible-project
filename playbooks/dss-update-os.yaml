@@ -1,0 +1,9 @@
+---
+- hosts: dss
+  become: yes
+  tasks:
+  - name: upgrade all packages
+    yum:
+      name: '*'
+      state: latest
+...

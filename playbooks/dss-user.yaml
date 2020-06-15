@@ -1,8 +1,7 @@
 
 ---
-# create dssuser, add ssh key, allow sudo
 - hosts: dss
-  become: yes                             # become root (to install packages)
+  become: yes                       
   tasks:
     - name: Create group for dssuser
       group: 

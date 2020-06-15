@@ -34,16 +34,6 @@
     ansible app -b -m git -a "repo=git://example.com/path/to/repo.git \
     dest=/opt/myapp update=yes version=1.2.4"
 
-### attach disk
-    lsblk
-    sudo mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/[DEVICE_ID]
-    sudo mkdir /dss
-    sudo chown dssuser /dss
-    sudo mount -o discard,defaults /dev/[DEVICE_ID] /dss[MNT_DIR]
-    sudo cp /etc/fstab /etc/fstab.backup
-    sudo blkid /dev/[DEVICE_ID]
-    to fstab >> UUID=[UUID_VALUE] /mnt/disks/[MNT_DIR] ext4 discard,defaults 0 2
-
 ### get dss, install deps, install dss
     wget
 

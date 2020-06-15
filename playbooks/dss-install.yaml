@@ -1,13 +1,9 @@
-
 ---
 - hosts: dss
   become: yes
+  vars:
+    dss_version: "7.0.1"
   tasks:
-  - name: Put SELinux in permissive mode, logging actions that would be blocked.
-    selinux:
-      policy: targeted
-      state: permissive
-
   - name: Create datadir
     file:
       path: /dss/data
@@ -24,21 +20,21 @@
       group: dssuser
       mode: 0711
 
-  - name: Download DSS # pass version via variable
+  - name: Download DSS 
     get_url: 
-      url: https://downloads.dataiku.com/public/studio/7.0.2/dataiku-dss-7.0.2.tar.gz
+      url: https://downloads.dataiku.com/public/studio/{{dss_version}}/dataiku-dss-{{dss_version}}.tar.gz
       dest: /dss/install/dataiku.tar.gz
       mode: '0440'
 
   - name: Get Hadoop Lib  
     get_url:  
-      url: https://downloads.dataiku.com/public/studio/7.0.2/dataiku-dss-hadoop3-standalone-libs-generic-7.0.2.tar.gz
+      url: https://downloads.dataiku.com/public/studio/{{dss_version}}/dataiku-dss-hadoop3-standalone-libs-generic-{{dss_version}}.tar.gz
       dest: /dss/install/dataiku-hadoop3.tar.gz
       mode: '0440'
 
   - name: Get Spark Lib  
     get_url:    
-      url: https://downloads.dataiku.com/public/studio/7.0.2/dataiku-dss-spark-standalone-7.0.2-2.4.3-generic-hadoop3.tar.gz
+      url: https://downloads.dataiku.com/public/studio/{{dss_version}}/dataiku-dss-spark-standalone-{{dss_version}}-2.4.3-generic-hadoop3.tar.gz
       dest: /dss/install/dataiku-spark.tar.gz
       mode: '0440'
   
@@ -55,14 +51,15 @@
   
   - name: install-deps
     expect: 
-      command: /dss/install/dataiku-dss-7.0.2/scripts/install/install-deps.sh
+      command: /dss/install/dataiku-dss-{{dss_version}}/scripts/install/install-deps.sh
       responses:
         .*\nIs this ok \[y\/N\]: y 
+      timeout: 600
     
   - name: install DSS 
     become: yes
     become_user: dssuser
-    shell: /dss/install/dataiku-dss-7.0.2/installer.sh -d /dss/data -p 11000
+    shell: /dss/install/dataiku-dss-{{dss_version}}/installer.sh -d /dss/data -p 11000
   
   - name: start DSS
     become: yes

@@ -1,11 +1,13 @@
 ---
 - hosts: dss
-  become: yes                             # become root (to install packages)
+  become: yes                             
+  vars:
+    dss_disk: /dev/xvdb
   tasks:
-  - name: Format the attached disk        # pass device via variable
+  - name: Format the attached disk        
     filesystem:
       fstype: ext4
-      dev: /dev/xvdb
+      dev: "{{dss_disk}}"
       resizefs: yes
 
   - name: Get UUID
@@ -20,6 +22,7 @@
       owner: dssuser
       group: dssuser
       mode: 0711
+      state: directory
       
   - name: Mount disk
     mount:

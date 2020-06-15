@@ -1,0 +1,12 @@
+---
+- hosts: dss
+  become: yes
+  tasks:
+  - name: Put SELinux in permissive mode, logging actions that would be blocked.
+    selinux:
+      policy: targeted
+      state: permissive
+  
+  - name: reboot machine to mount /dss and change SELinux
+    reboot:
+...
